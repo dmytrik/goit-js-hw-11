@@ -5,8 +5,9 @@ const search = form.elements.searchQuery;
 
 form.addEventListener('submit', searchImg);
 
-function searchImg(e) {
+async function searchImg(e) {
   e.preventDefault();
   const value = search.value;
-  fetchImages(value);
+  const images = await fetchImages(value);
+  console.log(images);
 }
