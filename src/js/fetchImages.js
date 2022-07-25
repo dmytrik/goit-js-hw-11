@@ -6,10 +6,6 @@ export default async function fetchImages(value) {
     method: 'get',
     url: `${URL}?key=${KEY}&q=${value}&image_type=photo&orientation=horizontal&safesearch=true`,
   });
-
-  // const fetch = await axios.get(
-  //   `${URL}?key=${KEY}&q=${value}&image_type=photo&orientation=horizontal&safesearch=true`
-  // );
   const data = await fetch.data;
   const images = await data.hits;
   return images;
