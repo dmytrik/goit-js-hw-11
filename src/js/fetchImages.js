@@ -1,12 +1,31 @@
 const axios = require('axios').default;
 const URL = 'https://pixabay.com/api/';
 const KEY = '28811056-f3e78fd673175542d7021b7d4';
-export default async function fetchImages(value) {
+
+const options = {
+  URL,
+  KEY,
+  page: 1,
+  totalHits: null,
+};
+
+export function defaultPage() {
+  options.page = 1;
+}
+
+export function getTotalHits() {
+  return options.totalHits;
+}
+
+export async function fetchImages(value) {
   const fetch = await axios({
     method: 'get',
-    url: `${URL}?key=${KEY}&q=${value}&image_type=photo&orientation=horizontal&safesearch=true`,
+    url: `${options.URL}?key=${options.KEY}&q=${value}&image_type=photo&orientation=horizontal&safesearch=true&page=${options.page}&per_page=40`,
   });
   const data = await fetch.data;
+  options.totalHits = data.totalHits;
+  console.log(options.totalHits);
   const images = await data.hits;
+  options.page += 1;
   return images;
 }

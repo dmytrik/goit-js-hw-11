@@ -1,7 +1,9 @@
-import fetchImages from './fetchImages';
 import Notiflix from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
+import { fetchImages } from './fetchImages';
+import { defaultPage } from './fetchImages';
+import { getTotalHits } from './fetchImages';
 
 const form = document.querySelector('.search-form');
 const search = form.elements.searchQuery;
@@ -9,11 +11,26 @@ const gallery = document.querySelector('.gallery');
 
 form.addEventListener('submit', searchImg);
 
+window.addEventListener('scroll', () => {
+  if (
+    window.scrollY + window.innerHeight >=
+    document.documentElement.scrollHeight
+  ) {
+    getImg();
+  }
+});
+
 async function searchImg(e) {
   e.preventDefault();
   clearGallery();
-  const value = search.value;
-  const images = await fetchImages(value);
+  defaultPage();
+  await getImg();
+  const totalHits = getTotalHits();
+  Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
+}
+
+async function getImg() {
+  const images = await fetchImages(search.value);
   images.length === 0 ? searchError() : creatGallery(images);
   console.log(images);
 }
