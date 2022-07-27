@@ -4,35 +4,53 @@ import 'simplelightbox/dist/simple-lightbox.min.css';
 import { fetchImages } from './fetchImages';
 import { defaultPage } from './fetchImages';
 import { getTotalHits } from './fetchImages';
+import { getCurrentPage } from './fetchImages';
 
 const form = document.querySelector('.search-form');
 const search = form.elements.searchQuery;
 const gallery = document.querySelector('.gallery');
+let showHits = true;
 
 form.addEventListener('submit', searchImg);
 
-window.addEventListener('scroll', () => {
-  if (
-    window.scrollY + window.innerHeight >=
-    document.documentElement.scrollHeight
-  ) {
-    getImg();
-  }
-});
+window.addEventListener('scroll', imagesScroll);
 
 async function searchImg(e) {
   e.preventDefault();
   clearGallery();
   defaultPage();
+  showHits = true;
   await getImg();
-  const totalHits = getTotalHits();
-  Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
 }
 
 async function getImg() {
   const images = await fetchImages(search.value);
-  images.length === 0 ? searchError() : creatGallery(images);
-  console.log(images);
+  const currentPage = getCurrentPage();
+  if (images.length === 0 && currentPage === 2) {
+    searchError();
+    return;
+  }
+  creatGallery(images);
+  showHits ? showMessageHits() : false;
+  showHits = false;
+  smoothlyScroll();
+}
+
+function imagesScroll() {
+  window.scrollY + window.innerHeight >= document.documentElement.scrollHeight
+    ? getImg()
+    : false;
+}
+
+function smoothlyScroll() {
+  window.scrollBy({
+    behavior: 'smooth',
+  });
+}
+
+function showMessageHits() {
+  const totalHits = getTotalHits();
+  Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
 }
 
 function clearGallery() {
@@ -55,8 +73,7 @@ function creatGallery(images) {
         views,
         comments,
         downloads,
-      }) => {
-        return `<a href="${largeImageURL}">
+      }) => `<a href="${largeImageURL}">
         <div class = 'gallery-img-box'>
           <img src="${webformatURL}" alt="${tags}" loading="lazy"/>
         </div>
@@ -78,8 +95,7 @@ function creatGallery(images) {
               <p>${downloads}</p>
             </div>
           </div>
-        </a>`;
-      }
+        </a>`
     )
     .join('');
   gallery.insertAdjacentHTML('beforeend', imagesHtml);

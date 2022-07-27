@@ -17,6 +17,10 @@ export function getTotalHits() {
   return options.totalHits;
 }
 
+export function getCurrentPage() {
+  return options.page;
+}
+
 export async function fetchImages(value) {
   const fetch = await axios({
     method: 'get',
@@ -24,7 +28,6 @@ export async function fetchImages(value) {
   });
   const data = await fetch.data;
   options.totalHits = data.totalHits;
-  console.log(options.totalHits);
   const images = await data.hits;
   options.page += 1;
   return images;

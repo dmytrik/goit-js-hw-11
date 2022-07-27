@@ -1,7 +1,39 @@
+body {
+  font-size: 16px;
+}
+
 .header {
   background-color: blue;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 80px;
+}
+.search-form {
+  display: flex;
+}
+input {
+  padding: 0;
+  margin: 0;
+}
+input:focus {
+  outline: none;
+}
+input::placeholder {
+  font-size: 16px;
+  padding: 2px;
+}
+.search {
+  display: block;
+  width: 20px;
+  height: 20px;
+  background-color: transparent;
+  background-image: url(../images/search.svg);
+  background-repeat: no-repeat;
+  background-size: 50%;
+  background-position: center;
+  transform: translateX(-100%);
+  border: none;
+  padding: 0;
+  margin: 0;
 }
