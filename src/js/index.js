@@ -116,6 +116,9 @@ function creatGallery(images) {
     )
     .join('');
   gallery.insertAdjacentHTML('beforeend', imagesHtml);
-  gallerySlb !== null ? gallerySlb.refresh() : false;
+  if (gallerySlb !== null) {
+    gallerySlb.refresh();
+    return;
+  }
   gallerySlb = new SimpleLightbox('.gallery a');
 }
