@@ -10,6 +10,7 @@ const form = document.querySelector('.search-form');
 const search = form.elements.searchQuery;
 const gallery = document.querySelector('.gallery');
 let showHits = true;
+let gallerySlb = null;
 
 form.addEventListener('submit', searchImg);
 
@@ -17,6 +18,9 @@ window.addEventListener('scroll', imagesScroll);
 
 async function searchImg(e) {
   e.preventDefault();
+  if (search.value.trim() === '') {
+    return;
+  }
   clearGallery();
   defaultPage();
   showHits = true;
@@ -25,15 +29,28 @@ async function searchImg(e) {
 
 async function getImg() {
   const images = await fetchImages(search.value);
+  if (images === undefined) {
+    return;
+  }
   const currentPage = getCurrentPage();
   if (images.length === 0 && currentPage === 2) {
     searchError();
+    return;
+  }
+  if (images.length === 0) {
+    endImages();
     return;
   }
   creatGallery(images);
   showHits ? showMessageHits() : false;
   showHits = false;
   smoothlyScroll();
+}
+
+export function endImages() {
+  Notiflix.Notify.failure(
+    `We're sorry, but you've reached the end of search results.`
+  );
 }
 
 function imagesScroll() {
@@ -99,5 +116,6 @@ function creatGallery(images) {
     )
     .join('');
   gallery.insertAdjacentHTML('beforeend', imagesHtml);
-  new SimpleLightbox('.gallery a');
+  gallerySlb !== null ? gallerySlb.refresh() : false;
+  gallerySlb = new SimpleLightbox('.gallery a');
 }
